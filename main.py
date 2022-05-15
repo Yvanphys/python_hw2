@@ -242,6 +242,7 @@ def main_worker(gpu, ngpus_per_node, args):
         num_workers=args.workers, pin_memory=True)
 
     if args.evaluate:
+        model.load_state_dict(torch.load('/root/check/checkpoint1.pth.tar')['state_dict'])
         validate(val_loader, model, criterion, args)
         return
 
