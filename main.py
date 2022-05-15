@@ -299,6 +299,9 @@ def train(train_loader, model, criterion, optimizer, epoch, args):
         train_dir = os.path.join('tensorboard', 'train')
         train_writer = SummaryWriter(log_dir=train_dir)
 
+        # # add graph to tensorboard
+        # train_writer.add_graph(model, images)
+        # train_writer.flush()
 
         # measure data loading time
         data_time.update(time.time() - end)
