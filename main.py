@@ -253,7 +253,7 @@ def main_worker(gpu, ngpus_per_node, args):
         train(train_loader, model, criterion, optimizer, epoch, args)
 
         # evaluate on validation set
-        acc1 = validate(val_loader, model, criterion, args)
+        acc1, loss = validate(val_loader, model, criterion, args)
         
         scheduler.step()
 
