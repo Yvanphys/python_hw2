@@ -257,7 +257,12 @@ def main_worker(gpu, ngpus_per_node, args):
         
         scheduler.step()
 
-        
+        # add the accuracy and loss to tensorboard 
+        val_dir = os.path.join('tensorboard', 'val')
+        val_writer = SummaryWriter(log_dir=val_dir)
+        val_writer.add_scalar('Loss', loss, epoch)
+        val_writer.add_scalar("Accuracy", acc1, epoch)
+
         # remember best acc@1 and save checkpoint
         is_best = acc1 > best_acc1
         best_acc1 = max(acc1, best_acc1)
@@ -290,6 +295,11 @@ def train(train_loader, model, criterion, optimizer, epoch, args):
 
     end = time.time()
     for i, (images, target) in enumerate(train_loader):
+        # add the accuracy and loss to tensorboard 
+        train_dir = os.path.join('tensorboard', 'train')
+        train_writer = SummaryWriter(log_dir=train_dir)
+
+
         # measure data loading time
         data_time.update(time.time() - end)
 
@@ -307,6 +317,10 @@ def train(train_loader, model, criterion, optimizer, epoch, args):
         losses.update(loss.item(), images.size(0))
         top1.update(acc1[0], images.size(0))
         top5.update(acc5[0], images.size(0))
+
+        # add loss and accuracy to tensorboard
+        train_writer.add_scalar('Loss', loss, epoch)
+        train_writer.add_scalar("Accuracy", acc5, epoch)
 
         # compute gradient and do SGD step
         optimizer.zero_grad()
@@ -361,7 +375,7 @@ def validate(val_loader, model, criterion, args):
 
         progress.display_summary()
 
-    return top1.avg
+    return top5.avg, loss
 
 
 def save_checkpoint(state, is_best, filename='checkpoint.pth.tar'):
